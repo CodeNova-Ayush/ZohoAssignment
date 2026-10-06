@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AgentStatus {
+  ACTIVE
+  INACTIVE
+  ON_DUTY
+  OFF_DUTY
+  SUSPENDED
+}
+
+enum VehicleType {
+  BICYCLE
+  MOTORCYCLE
+  CAR
+  VAN
+  WALKER
+}
+
+model DeliveryAgent {
+  id           String       @id @default(uuid())
+  name         String
+  phone        String       @unique
+  email        String       @unique
+  serviceArea  String
+  status       AgentStatus  @default(ACTIVE)
+  vehicleType  VehicleType? @default(MOTORCYCLE)
+  rating       Float        @default(5.0)
+  currentLoad  Int          @default(0)
+  maxCapacity  Int          @default(10)
+  notes        String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@index([status])
+  @@index([serviceArea])
+  @@index([email])
+  @@index([phone])
+  @@map("delivery_agents")
+}
